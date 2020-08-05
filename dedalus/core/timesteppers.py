@@ -83,6 +83,7 @@ class MultistepIMEX:
         pencils = solver.pencils
         evaluator = solver.evaluator
         state = solver.state
+        STORE_EXPANDED_MATRICES = solver.problem.STORE_EXPANDED_MATRICES
 
         evaluator_kw = {}
         evaluator_kw['world_time'] = world_time = solver.get_world_time()
@@ -148,7 +149,10 @@ class MultistepIMEX:
         for p in pencils:
             pRHS = RHS.get_pencil(p)
             if update_LHS:
-                np.copyto(p.LHS.data, a0*p.M_exp.data + b0*p.L_exp.data)
+                if STORE_EXPANDED_MATRICES:
+                    np.copyto(p.LHS.data, a0*p.M_exp.data + b0*p.L_exp.data)
+                else:
+                    p.LHS = (a0*p.M + b0*p.L) @ p.pre_right
                 # Remove old solver reference before building new solver
                 p.LHS_solver = None
                 p.LHS_solver = solver.matsolver(p.LHS, solver)
@@ -519,6 +523,7 @@ class RungeKuttaIMEX:
         pencils = solver.pencils
         evaluator = solver.evaluator
         state = solver.state
+        STORE_EXPANDED_MATRICES = solver.problem.STORE_EXPANDED_MATRICES
 
         evaluator_kw = {}
         evaluator_kw['world_time'] = world_time = solver.get_world_time()
@@ -576,7 +581,10 @@ class RungeKuttaIMEX:
                 pRHS = RHS.get_pencil(p)
                 # Construct LHS(n,i)
                 if update_LHS:
-                    np.copyto(p.LHS.data, p.M_exp.data + (k*H[i,i])*p.L_exp.data)
+                    if STORE_EXPANDED_MATRICES:
+                        np.copyto(p.LHS.data, p.M_exp.data + (k*H[i,i])*p.L_exp.data)
+                    else:
+                        p.LHS = (p.M + (k*H[i,i])*p.L) @ p.pre_right
                     # Remove old solver reference before building new solver
                     p.LHS_solvers[i] = None
                     p.LHS_solvers[i] = solver.matsolver(p.LHS, solver)
