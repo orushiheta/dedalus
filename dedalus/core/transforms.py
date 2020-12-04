@@ -108,6 +108,7 @@ class JacobiTransform(SeparableTransform):
 
 @register_transform(basis.Jacobi, 'matrix')
 @register_transform(basis.SphericalShellRadialBasis, 'matrix')
+@register_transform(basis.AnnulusBasis, 'matrix')
 class JacobiMMT(JacobiTransform, SeparableMatrixTransform):
     """Jacobi polynomial MMTs."""
 
