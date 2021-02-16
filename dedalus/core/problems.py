@@ -424,7 +424,6 @@ class NonlinearBoundaryValueProblem(ProblemBase):
         #eqn['dH'] = convert(dH.expand(*perts), eqn['bases'])
         eqn['dH'] = dH
         eqn['-H'] = -H
-        print(dH)
         eqn['matrix_dependence'] = dH.matrix_dependence(*perts)
         eqn['matrix_coupling'] = dH.matrix_coupling(*perts)
         # Debug logging
